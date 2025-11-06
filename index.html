@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plus Code Navigator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:2em; background: #f7f7f7;}
+    .center { text-align: center; }
+    #plusCode { font-size:1.5em; font-weight:bold; margin: 1.5em 0;}
+    #placeName { margin-top:1em; padding:2em; background: #ffd52f; color: #064420; display:none; text-align:center;font-size:1.4rem;font-weight:600; border-radius:1em;}
+    #photoPrompt { 
+      margin:1em auto 0 auto; 
+      padding:2em; 
+      max-width:400px; 
+      background:#fffbe6; 
+      color: #444; 
+      font-size: 1em; 
+      border-radius: 1em;
+      border: 1px solid #ffe29b;
+      display: none;
+      text-align: left;
+    }
+    button { margin:1em 0.5em 1em 0; padding:0.6em 1.3em; font-size:1em; border-radius:2rem; border:none; background:#04b3bf; color:white; cursor:pointer;}
+    button:disabled { background: #ccc;}
+    #openMapsBtn { background:#ef6079; color: white;}
+    #controls { margin-bottom:1em; }
+    h2 {text-align:center; line-height:2.4rem;}
+    p {text-align:center;}
+    #progress { text-align:center; color:#666; margin-top: 0.5em; }
+    #completion { 
+      display:none; 
+      background:#d6eaf8;
+      color:#154360;
+      padding:2em;
+      font-size:1.25em;
+      border-radius:1.5em;
+      margin-top:2em;
+    }
+    #backBtn {
+      display: block;
+      margin: 2em auto 0 auto;
+      background: #04b3bf;
+      color: white;
+      font-size: 1em;
+      border-radius: 2rem;
+      border: none;
+      padding: 0.6em 2em;
+      cursor: pointer;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <h2>BLASH 80<br>
+INTERACTIVE BIRTHDAY CHALLENGE</h2>
+  <div class="center">
+    <p id="locationPrompt">Your next location is:</p>
+    <div id="plusCode"></div>
+    <button id="openMapsBtn">1. Open in Google Maps</button>
+    <button id="revealNameBtn">2. Click to reveal name</button>
+    <div id="placeName"></div>
+    <div id="photoPrompt">
+      <b>Ask a stranger to take a photograph</b> of the two of you, holding up the characters provided.<br><br>
+      If there is no-one to perform this function, Evelyn can photograph you <b>holding the characters.</b><br><br>
+      There may be something interesting about the location, or there may not. If not, your photo becomes the point of interest!
+    </div>
+    <div id="controls">
+      <button id="prevLocation">Previous</button>
+      <button id="nextLocation">Next</button>
+    </div>
+    <div id="progress"></div>
+    <div id="completion">
+      <b>Congratulations, you have completed the challenge.</b><br>
+      Share the photos you have taken with Guy, and stay tuned to see what's to come next!
+      <button id="backBtn">Back</button>
+    </div>
+  </div>
+  <script>
+    const locations = [
+      {name: "City Basement Books", code: "5XJ7+J7 Melbourne, Victoria"},
+      {name: "Banh Mi Ong Hoa 300 flinders Ln", code: "5XM7+4M Melbourne, Victoria"},
+      {name: "The Block Arcade", code: "5XM7+MV Melbourne, Victoria"},
+      {name: "Myer", code: "5XP7+FQ Melbourne, Victoria"},
+      {name: "Outre Gallery", code: "5XP6+VW Melbourne, Victoria"},
+      {name: "Telstra Payphone", code: "5XQ5+2R Melbourne, Victoria"},
+      {name: "Hellenic Museum", code: "5XQ4+4V Melbourne, Victoria"},
+      {name: "Drink tap, Flagstaff Gardens", code: "5XQ4+C2 West Melbourne, Victoria"},
+      {name: "Flagstaff Gardens Hill", code: "5XQ3+QR West Melbourne, Victoria"},
+      {name: "Public toilet flagstaff", code: "5XR4+C2 West Melbourne, Victoria"},
+      {name: "Queen Victoria Market", code: "5XR4+XP Melbourne, Victoria"},
+      {name: "Bratwurst & Co", code: "5XV5+4M Melbourne, Victoria"},
+      {name: "Drinking Fountain", code: "5XR6+VC Melbourne, Victoria"},
+      {name: "Marche Boardgame cafe, A'Beckett St", code: "5XR6+9P Melbourne, Victoria"},
+      {name: "Matcha Inc Gallery, 26 Guildford Lane", code: "5XQ6+G2 Melbourne, Victoria"},
+      {name: "County Court", code: "5XP5+M3 Melbourne, Victoria"},
+      {name: "Schmucks Bagels, Guests Lane", code: "5XP4+5P Melbourne, Victoria"},
+      {name: "Mural by Makayrin & Bizjak", code: "5XM4+9H Melbourne, Victoria"},
+      {name: "Rialto", code: "5XJ5+M3 Melbourne, Victoria"},
+      {name: "Immigration Museum", code: "5XJ6+85 Melbourne, Victoria"},
+      {name: "Ian Potter NGV", code: "5XM9+5V Melbourne, Victoria"},
+      {name: "Treasury Gardens", code: "5XPG+79 East Melbourne, Victoria"},
+      {name: "Treasury Toilets", code: "5XPH+J2 East Melbourne, Victoria"},
+      {name: "People’s Path", code: "5XQH+H9 East Melbourne, Victoria"},
+      {name: "Tram Stop: Lansdowne / Victoria Pde #13", code: "5XRH+J8 Fitzroy, Victoria"},
+      {name: "Hospital for horses and dogs", code: "5XVG+CW Fitzroy, Victoria"},
+      {name: "Cutler & Co", code: "5XVG+R9 Fitzroy, Victoria"},
+      {name: "Colonial Square", code: "5XWF+56 Carlton, Victoria"},
+      {name: "Royal Exhibition Building", code: "5XWC+4M Carlton, Victoria"},
+      {name: "Royal Society of Victoria", code: "5XR9+WP Melbourne, Victoria"},
+      {name: "Her Majesty’s Theatre", code: "5XQ9+JR Melbourne, Victoria"},
+      {name: "Black Velvet Coffee", code: "5XPC+X9 Melbourne, Victoria"},
+      {name: "Sofitel on Collins", code: "5XPF+C5 Melbourne, Victoria"},
+    ];
+    let currentIndex = 0;
+    let completed = false;
+
+    function updateNavButtons() {
+      document.getElementById('prevLocation').disabled = (currentIndex === 0 || completed);
+      document.getElementById('nextLocation').disabled = completed;
+    }
+
+    function showLocation(index) {
+      completed = false;
+      document.getElementById('completion').style.display = 'none';
+      document.getElementById('locationPrompt').style.display = '';
+      document.getElementById('plusCode').style.display = '';
+      document.getElementById('openMapsBtn').style.display = '';
+      document.getElementById('revealNameBtn').style.display = '';
+      document.getElementById('controls').style.display = '';
+      document.getElementById('placeName').style.display = 'none';
+      document.getElementById('photoPrompt').style.display = 'none';
+      document.getElementById('plusCode').textContent = locations[index].code;
+      document.getElementById('placeName').textContent = locations[index].name;
+      document.getElementById('progress').textContent = `Location ${index + 1} of ${locations.length}`;
+      document.getElementById('revealNameBtn').disabled = false;
+      updateNavButtons();
+      updateMapsButton(index);
+    }
+
+    function showCompletion() {
+      completed = true;
+      document.getElementById('completion').style.display = 'block';
+      document.getElementById('locationPrompt').style.display = 'none';
+      document.getElementById('plusCode').style.display = 'none';
+      document.getElementById('openMapsBtn').style.display = 'none';
+      document.getElementById('revealNameBtn').style.display = 'none';
+      document.getElementById('controls').style.display = 'none';
+      document.getElementById('placeName').style.display = 'none';
+      document.getElementById('photoPrompt').style.display = 'none';
+      document.getElementById('progress').textContent = '';
+    }
+
+    function updateMapsButton(index) {
+      var mapsBtn = document.getElementById('openMapsBtn');
+      var plusCode = locations[index].code;
+      var url = "https://maps.google.com/?q=" + encodeURIComponent(plusCode);
+      mapsBtn.onclick = function() {
+        window.open(url, "_blank");
+      };
+    }
+
+    document.getElementById('revealNameBtn').onclick = function() {
+      document.getElementById('placeName').style.display = 'block';
+      document.getElementById('photoPrompt').style.display = 'block';
+      this.disabled = true;
+    };
+    document.getElementById('nextLocation').onclick = function() {
+      if(currentIndex < locations.length - 1) {
+        currentIndex++;
+        showLocation(currentIndex);
+      } else if(currentIndex === locations.length - 1) {
+        showCompletion();
+      }
+    };
+    document.getElementById('prevLocation').onclick = function() {
+      if(completed) {
+        currentIndex = locations.length - 1;
+        showLocation(currentIndex);
+      } else if(currentIndex > 0) {
+        currentIndex--;
+        showLocation(currentIndex);
+      }
+    };
+
+    document.getElementById('backBtn').onclick = function() {
+      currentIndex = locations.length - 1;
+      showLocation(currentIndex);
+    };
+
+    showLocation(currentIndex);
+  </script>
+</body>
+</html>
