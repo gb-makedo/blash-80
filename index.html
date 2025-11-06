@@ -2,55 +2,71 @@
 <html lang="en">
 <head>
 <meta name="robots" content="noindex">
-  <meta charset="UTF-8">
-  <title>Plus Code Navigator</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin:2em; background: #f7f7f7;}
-    .center { text-align: center; }
-    #plusCode { font-size:1.5em; font-weight:bold; margin: 1.5em 0;}
-    #placeName { margin-top:1em; padding:2em; background: #ffd52f; color: #064420; display:none; text-align:center;font-size:1.4rem;font-weight:600; border-radius:1em;}
-    #photoPrompt { 
-      margin:1em auto 0 auto; 
-      padding:2em; 
-      max-width:400px; 
-      background:#fffbe6; 
-      color: #444; 
-      font-size: 1em; 
-      border-radius: 1em;
-      border: 1px solid #ffe29b;
-      display: none;
-      text-align: left;
+<meta charset="UTF-8">
+<title>Plus Code Navigator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">  <!-- ADDED FOR MOBILE -->
+<style>
+  body { font-family: Arial, sans-serif; margin:2em; background: #f7f7f7;}
+  .center { text-align: center; }
+  #plusCode { font-size:2em; font-weight:bold; margin: 1.5em 0;} /* larger */
+  #placeName { margin-top:1em; padding:2em; background: #ffd52f; color: #064420; display:none; text-align:center;font-size:1.5em;font-weight:600; border-radius:1em;}
+  #photoPrompt { 
+    margin:1em auto 0 auto; 
+    padding:2em; 
+    max-width:400px; 
+    background:#fffbe6; 
+    color: #444; 
+    font-size:1.2em; 
+    border-radius: 1em;
+    border: 1px solid #ffe29b;
+    display: none;
+    text-align: left;
+  }
+  button { margin:1em 0.5em 1em 0; padding:1em 1.8em; font-size:1.2em; border-radius:2rem; border:none; background:#04b3bf; color:white; cursor:pointer;}
+  button:disabled { background: #ccc;}
+  #openMapsBtn { background:#ef6079; color: white;}
+  #controls { margin-bottom:1em; }
+  h2 {text-align:center; line-height:2.4rem; font-size:2em;}
+  p {text-align:center; font-size:1.1em;}
+  #progress { text-align:center; color:#666; margin-top: 0.5em; font-size:1.1em;}
+  #completion { 
+    display:none; 
+    background:#d6eaf8;
+    color:#154360;
+    padding:2em;
+    font-size:1.35em;
+    border-radius:1.5em;
+    margin-top:2em;
+  }
+  #backBtn {
+    display: block;
+    margin: 2em auto 0 auto;
+    background: #04b3bf;
+    color: white;
+    font-size: 1.2em;
+    border-radius: 2rem;
+    border: none;
+    padding: 1em 2em;
+    cursor: pointer;
+    text-align:center;
+  }
+
+  /* --- MOBILE FRIENDLY MEDIA QUERY --- */
+  @media screen and (max-width: 600px) {
+    body { margin:0.7em; }
+    #plusCode, h2, #placeName, #photoPrompt, #completion, #progress {
+      font-size:1.25em !important;
     }
-    button { margin:1em 0.5em 1em 0; padding:0.6em 1.3em; font-size:1em; border-radius:2rem; border:none; background:#04b3bf; color:white; cursor:pointer;}
-    button:disabled { background: #ccc;}
-    #openMapsBtn { background:#ef6079; color: white;}
+    h2 { font-size:1.25em !important; }
+    #placeName { font-size:1.1em !important; padding:1em; }
+    #photoPrompt { font-size:1em !important; padding:1em; }
+    #completion { padding:1em; font-size:1.1em !important; }
+    button, #backBtn { font-size:1.05em; padding:1em 1em; }
     #controls { margin-bottom:1em; }
-    h2 {text-align:center; line-height:2.4rem;}
-    p {text-align:center;}
-    #progress { text-align:center; color:#666; margin-top: 0.5em; }
-    #completion { 
-      display:none; 
-      background:#d6eaf8;
-      color:#154360;
-      padding:2em;
-      font-size:1.25em;
-      border-radius:1.5em;
-      margin-top:2em;
-    }
-    #backBtn {
-      display: block;
-      margin: 2em auto 0 auto;
-      background: #04b3bf;
-      color: white;
-      font-size: 1em;
-      border-radius: 2rem;
-      border: none;
-      padding: 0.6em 2em;
-      cursor: pointer;
-      text-align:center;
-    }
-  </style>
+  }
+</style>
 </head>
+
 <body>
   <h2>BLASH 80<br>
 INTERACTIVE BIRTHDAY CHALLENGE</h2>
